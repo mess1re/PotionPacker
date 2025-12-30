@@ -1,0 +1,23 @@
+# PotionPacker configuration
+# Valid range for each: 1..64
+
+stack_sizes:
+  # Regular drinkable potions
+  potion: 16
+  # Splash potions
+  splash_potion: 16
+  # Lingering potions
+  lingering_potion: 16
+
+messages:
+  # MiniMessage is supported + "#RRGGBB" hex (auto-converted to "<#RRGGBB>")
+  prefix: "#FFD700[PotionPacker] "
+
+  no-permission: "%prefix%#FF5555You don't have permission."
+  reloaded: "%prefix%#55FF55Configuration reloaded."
+
+  help:
+    - ""
+    - "%prefix%#FFFFFFCommands:"
+    - "#AAAAAA/pp reload #777777- reload the config"
+    - ""

@@ -1,0 +1,19 @@
+name: PotionPacker
+main: me.mss1r.pspacker.PotionPackerPlugin
+version: 1.0.0
+api-version: "1.21"
+folia-supported: true
+
+author: mss1r
+description: Allows potions to stack naturally using Paper Data Components.
+
+commands:
+  potionpacker:
+    description: PotionPacker control command
+    usage: /potionpacker reload
+    aliases: [pp]
+
+permissions:
+  potionpacker.reload:
+    description: Allows reloading PotionPacker config
+    default: op
