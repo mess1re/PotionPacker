@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "me.mss1r.pspacker"
-version = "1.0.0"
+version = "1.1.0"
 
 java {
     toolchain {
@@ -17,7 +17,6 @@ repositories {
 }
 
 dependencies {
-    // Paper API (нужно для DataComponentTypes и Adventure sendMessage(Component))
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
 }
 

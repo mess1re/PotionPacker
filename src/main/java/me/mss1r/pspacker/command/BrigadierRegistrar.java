@@ -5,6 +5,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import me.mss1r.pspacker.PotionPackerPlugin;
 import me.mss1r.pspacker.util.PotionPackerMessages;
+import me.mss1r.pspacker.util.PotionStackUtil;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -32,6 +33,12 @@ public final class BrigadierRegistrar {
                         .requires(src -> src.getSender().hasPermission("potionpacker.reload"))
                         .executes(ctx -> {
                             plugin.reloadLocalConfig();
+
+                            for (var p : plugin.getServer().getOnlinePlayers()) {
+                                plugin.invalidateProfileCache(p.getUniqueId());
+                                PotionStackUtil.normalizeInventoryComponentsOnly(plugin, p, p.getInventory());
+                            }
+
                             sender(ctx).sendMessage(msg.c("messages.reloaded"));
                             return Command.SINGLE_SUCCESS;
                         }))

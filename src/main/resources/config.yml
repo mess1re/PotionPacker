@@ -1,21 +1,88 @@
+# ============================================================
 # PotionPacker configuration
-# Valid range for each: 1..64
+#
+# All stack size values must be in range: 1..64
+# Changes take effect after /pp reload or server restart
+# ============================================================
 
+# ------------------------------------------------------------
+# Legacy (non-profile) mode stack sizes
+# Used only when profiles.enabled = false
+# ------------------------------------------------------------
 stack_sizes:
   # Regular drinkable potions
   potion: 16
+
   # Splash potions
   splash_potion: 16
+
   # Lingering potions
   lingering_potion: 16
 
+
+# ------------------------------------------------------------
+# Profile system toggle
+#
+# false — use stack_sizes above (global values)
+# true  — use stack_profiles below with permissions
+# ------------------------------------------------------------
+profiles:
+  enabled: false
+
+
+# ------------------------------------------------------------
+# Stack profiles (used only when profiles.enabled = true)
+#
+# Each profile is selected by permission:
+#   potionpacker.profile.<profile_name>
+#
+# If a player has multiple profile permissions,
+# the profile with the highest priority is used.
+#
+# Profiles inherit missing values from "default".
+# ------------------------------------------------------------
+stack_profiles:
+
+  # Default profile (used when player has no profile permissions)
+  default:
+    # Base priority (usually 0)
+    priority: 0
+
+    potion: 16
+    splash_potion: 16
+    lingering_potion: 16
+
+
+  # Example profile: full 64-stack potions
+  #
+  # Permission: potionpacker.profile.stack_to_64
+  stack_to_64:
+    # Higher priority overrides lower ones
+    priority: 100
+
+    potion: 64
+    splash_potion: 64
+    lingering_potion: 64
+
+
+# ------------------------------------------------------------
+# Plugin messages
+#
+# MiniMessage formatting is supported.
+# You can also use hex colors like "#RRGGBB"
+# (they will be auto-converted to MiniMessage format)
+# ------------------------------------------------------------
 messages:
-  # MiniMessage is supported + "#RRGGBB" hex (auto-converted to "<#RRGGBB>")
+  # Prefix used in all plugin messages
   prefix: "#FFD700[PotionPacker] "
 
+  # Shown when player has no permission
   no-permission: "%prefix%#FF5555You don't have permission."
+
+  # Shown after successful /pp reload
   reloaded: "%prefix%#55FF55Configuration reloaded."
 
+  # /pp help output
   help:
     - ""
     - "%prefix%#FFFFFFCommands:"

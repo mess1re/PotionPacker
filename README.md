@@ -1,6 +1,6 @@
 # PotionPacker
 
-**PotionPacker** is a lightweight utility plugin for Minecraft servers, which allows **potions to stack** using the 
+**PotionPacker** is a lightweight utility plugin for Minecraft servers that allows **potions to stack** using the  
 **Data Component API (`MAX_STACK_SIZE`)** — without NMS or reflection.
 
 ---
@@ -9,47 +9,29 @@
 
 - Stack **normal**, **splash**, and **lingering** potions
 - Per-type stack size configuration
+- Optional **profile-based system** with permissions and priorities
 - Works with:
   - player inventories
   - cursor interactions
   - shift-click & double-click
   - hoppers and container transfers
   - dropped items in the world
-
-- Live config reload support
+- Live configuration reload support
+- Folia-safe scheduling
 
 ---
 
-## Configuration
+### Profile system
+PotionPacker supports an optional **profile-based mode**:
+- Profiles are enabled via a config toggle
+- Each profile is bound to a permission:
+  ```
+  potionpacker.profile.<profile_name>
+  ```
+- If a player has multiple profile permissions, the profile with the **highest priority** is used
+- Profiles inherit missing values from the `default` profile
 
-```yaml
-# PotionPacker configuration
-# Valid range for each: 1..64
-
-stack_sizes:
-  # Regular drinkable potions
-  potion: 16
-  # Splash potions
-  splash_potion: 16
-  # Lingering potions
-  lingering_potion: 16
-
-messages:
-  # MiniMessage is supported + "#RRGGBB" hex (auto-converted to "<#RRGGBB>")
-  prefix: "#FFD700[PotionPacker] "
-
-  no-permission: "%prefix%#FF5555You don't have permission."
-  reloaded: "%prefix%#55FF55Configuration reloaded."
-
-  help:
-    - ""
-    - "%prefix%#FFFFFFCommands:"
-    - "#AAAAAA/pp reload #777777- reload the config"
-    - ""
-
-```
-
-Setting a value to `1` restores **pure vanilla behavior**.
+Changes can be applied **without restart** using `/pp reload`.
 
 ---
 
@@ -68,22 +50,22 @@ Alias: `/pp reload`
 | Permission | Description |
 |-----------|------------|
 | `potionpacker.reload` | Allows reloading the config |
+| `potionpacker.profile.<name>` | Assigns a stack profile to a player |
 
 ---
 
 ## Compatibility
 
--
 - ✅ Paper **1.21.3+** and forks (Purpur, Pufferfish, etc.)
 - ✅ Folia
-- ❌ Spigot (no DataComponent API)
+- ❌ Spigot (no Data Component API)
 - ❌ Minecraft 1.20.x and older
 
 ---
 
 ## Building from source
 
-PotionStacker uses **Gradle**.
+PotionPacker uses **Gradle**.
 
 ### Requirements
 
@@ -108,5 +90,5 @@ build/libs/
 
 ## License
 
-PotionStacker is licensed under the **MIT License**.  
+PotionPacker is licensed under the **MIT License**.  
 You are free to use, modify, and redistribute it.
