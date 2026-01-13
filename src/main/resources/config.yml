@@ -66,6 +66,19 @@ stack_profiles:
 
 
 # ------------------------------------------------------------
+# Command settings
+#
+# Command aliases (apply after server restart):
+# - single word (no spaces)
+# - case-insensitive
+# - must not match the main command name
+# ------------------------------------------------------------
+command:
+  aliases:
+    - pp
+
+
+# ------------------------------------------------------------
 # Plugin messages
 #
 # MiniMessage formatting is supported.
