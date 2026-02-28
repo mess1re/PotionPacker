@@ -35,6 +35,19 @@ public final class PotionStackUtil {
         return false;
     }
 
+    public static boolean forceMaxStackToAmount(ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return false;
+        int amount = stack.getAmount();
+        if (amount <= 0) return false;
+
+        Integer cur = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
+        if (cur == null || cur < amount) {
+            stack.setData(DataComponentTypes.MAX_STACK_SIZE, amount);
+            return true;
+        }
+        return false;
+    }
+
     public static boolean applyComponent(PotionPackerPlugin plugin, Player player, ItemStack stack) {
         if (stack == null || stack.getType().isAir()) return false;
         Material m = stack.getType();
@@ -75,5 +88,34 @@ public final class PotionStackUtil {
 
             if (applyComponentDefault(plugin, it)) inv.setItem(i, it);
         }
+    }
+
+    public static boolean normalizeCarryForPlayer(PotionPackerPlugin plugin, Player player, ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return false;
+        if (!isPotionLike(stack.getType())) return false;
+
+        return applyComponent(plugin, player, stack);
+    }
+
+    public static boolean normalizeEntityForPlayer(PotionPackerPlugin plugin, Player player, ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return false;
+        if (!isPotionLike(stack.getType())) return false;
+
+        int desired = plugin.desiredSize(player, stack.getType());
+        if (desired > 0 && stack.getAmount() > desired) {
+            return forceMaxStackToAmount(stack);
+        }
+        return applyComponent(plugin, player, stack);
+    }
+
+    public static boolean normalizeEntityDefault(PotionPackerPlugin plugin, ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return false;
+        if (!isPotionLike(stack.getType())) return false;
+
+        int desired = plugin.desiredSizeDefault(stack.getType());
+        if (desired > 0 && stack.getAmount() > desired) {
+            return forceMaxStackToAmount(stack);
+        }
+        return applyComponentDefault(plugin, stack);
     }
 }

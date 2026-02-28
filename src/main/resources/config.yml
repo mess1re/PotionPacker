@@ -1,22 +1,15 @@
 # ============================================================
 # PotionPacker configuration
-#
-# All stack size values must be in range: 1..64
-# Changes take effect after /pp reload or server restart
+# Apply: /pp reload
 # ============================================================
 
 # ------------------------------------------------------------
-# Legacy (non-profile) mode stack sizes
+# Global mode
 # Used only when profiles.enabled = false
 # ------------------------------------------------------------
 stack_sizes:
-  # Regular drinkable potions
   potion: 16
-
-  # Splash potions
   splash_potion: 16
-
-  # Lingering potions
   lingering_potion: 16
 
 

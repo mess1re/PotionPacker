@@ -54,7 +54,6 @@ public final class BrigadierRegistrar {
     private LiteralCommandNode<CommandSourceStack> buildRoot() {
         return Commands.literal("potionpacker")
                 .executes(ctx -> {
-                    sender(ctx).sendMessage(msg.c("messages.help_header"));
                     for (String line : plugin.getConfig().getStringList("messages.help")) {
                         sender(ctx).sendMessage(msg.cRaw(line));
                     }

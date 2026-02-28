@@ -17,7 +17,7 @@ public final class TextUtil {
         if (input == null || input.isEmpty()) return Component.empty();
 
         Matcher m = HEX.matcher(input);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (m.find()) {
             m.appendReplacement(sb, "<#" + m.group(1) + ">");
         }

@@ -76,10 +76,13 @@ public final class PotionPackerListener implements Listener {
         }
         PotionStackUtil.normalizeInventoryComponentsOnly(plugin, p, live.getBottomInventory());
 
+        // cursor = carry
         ItemStack cursor = p.getItemOnCursor();
-        if (PotionStackUtil.applyComponent(plugin, p, cursor)) {
+        if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, cursor)) {
             p.setItemOnCursor(cursor);
         }
+
+        normalizeCreativeCarry(p);
     }
 
     private void scheduleFullNormalizeOnce(Player p) {
@@ -116,7 +119,7 @@ public final class PotionPackerListener implements Listener {
 
                 if (isBrewing(live.getTopInventory()) && slot < topSize) {
                     ItemStack cursor = p.getItemOnCursor();
-                    if (PotionStackUtil.applyComponent(plugin, p, cursor)) {
+                    if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, cursor)) {
                         p.setItemOnCursor(cursor);
                     }
                     return;
@@ -124,21 +127,23 @@ public final class PotionPackerListener implements Listener {
 
                 if (slot < topSize) {
                     ItemStack it = live.getTopInventory().getItem(slot);
-                    if (PotionStackUtil.applyComponent(plugin, p, it)) {
+                    if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, it)) {
                         live.getTopInventory().setItem(slot, it);
                     }
                 } else {
                     int bottomSlot = slot - topSize;
                     ItemStack it = live.getBottomInventory().getItem(bottomSlot);
-                    if (PotionStackUtil.applyComponent(plugin, p, it)) {
+                    if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, it)) {
                         live.getBottomInventory().setItem(bottomSlot, it);
                     }
                 }
 
                 ItemStack cursor = p.getItemOnCursor();
-                if (PotionStackUtil.applyComponent(plugin, p, cursor)) {
+                if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, cursor)) {
                     p.setItemOnCursor(cursor);
                 }
+
+                normalizeCreativeCarry(p);
             } finally {
                 scheduledSlotNormalize.remove(id);
                 pendingRawSlot.remove(id);
@@ -184,39 +189,10 @@ public final class PotionPackerListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
 
-        if (isMassAction(e.getAction(), e.getClick())) {
-            scheduleFullNormalizeOnce(p);
-        } else {
-            scheduleSlotNormalize(p, e.getRawSlot());
-        }
+        if (isMassAction(e.getAction(), e.getClick())) scheduleFullNormalizeOnce(p);
+        else scheduleSlotNormalize(p, e.getRawSlot());
 
-        if (e.getRawSlot() == -999) {
-            ItemStack cursor = e.getCursor();
-            if (cursor != null && !cursor.getType().isAir() && PotionStackUtil.isPotionLike(cursor.getType())) {
-
-                int desired = plugin.desiredSize(p, cursor.getType());
-                if (desired > 0 && cursor.getAmount() > desired) {
-
-                    e.setCancelled(true);
-
-                    int dropAmount = desired;
-
-                    ItemStack drop = cursor.clone();
-                    drop.setAmount(dropAmount);
-                    PotionStackUtil.applyComponent(plugin, p, drop);
-
-                    int left = cursor.getAmount() - dropAmount;
-                    cursor.setAmount(left);
-                    PotionStackUtil.applyComponent(plugin, p, cursor);
-
-                    p.setItemOnCursor(cursor);
-                    e.setCursor(cursor);
-
-                    p.getWorld().dropItemNaturally(p.getLocation(), drop);
-
-                }
-            }
-        }
+        preValidateDropIfOverstack(e, p);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -228,37 +204,58 @@ public final class PotionPackerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreative(InventoryCreativeEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
+
         scheduleFullNormalizeOnce(p);
+        preValidateDropIfOverstack(e, p);
     }
 
+    // drop -> entity
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
         Item ent = e.getItemDrop();
         ItemStack st = ent.getItemStack();
-        if (PotionStackUtil.applyComponent(plugin, p, st)) ent.setItemStack(st);
+        if (st == null || st.getType().isAir()) return;
+
+        if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, st)) {
+            ent.setItemStack(st);
+        }
     }
 
+    // pickup -> entity
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPickup(EntityPickupItemEvent e) {
         if (!(e.getEntity() instanceof Player p)) return;
         Item ent = e.getItem();
         ItemStack st = ent.getItemStack();
-        if (PotionStackUtil.applyComponent(plugin, p, st)) ent.setItemStack(st);
+
+        if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, st)) {
+            ent.setItemStack(st);
+        }
     }
 
+    // spawn -> entity default
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent e) {
         Item ent = e.getEntity();
         ItemStack st = ent.getItemStack();
-        if (PotionStackUtil.applyComponentDefault(plugin, st)) ent.setItemStack(st);
+        if (st == null || st.getType().isAir()) return;
+
+        if (PotionStackUtil.normalizeEntityDefault(plugin, st)) {
+            ent.setItemStack(st);
+        }
     }
 
+    // entity drop -> entity default
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDrop(EntityDropItemEvent e) {
         Item ent = e.getItemDrop();
         ItemStack st = ent.getItemStack();
-        if (PotionStackUtil.applyComponentDefault(plugin, st)) ent.setItemStack(st);
+        if (st == null || st.getType().isAir()) return;
+
+        if (PotionStackUtil.normalizeEntityDefault(plugin, st)) {
+            ent.setItemStack(st);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -266,7 +263,9 @@ public final class PotionPackerListener implements Listener {
         ItemStack item = e.getItem();
         if (item == null || item.getType().isAir()) return;
 
-        if (PotionStackUtil.applyComponentDefault(plugin, item)) e.setItem(item);
+        if (PotionStackUtil.normalizeEntityDefault(plugin, item)) {
+            e.setItem(item);
+        }
         if (!PotionStackUtil.isPotionLike(item.getType())) return;
 
         Inventory dst = e.getDestination();
@@ -282,7 +281,9 @@ public final class PotionPackerListener implements Listener {
     public void onHopperPickup(InventoryPickupItemEvent e) {
         Item ent = e.getItem();
         ItemStack st = ent.getItemStack();
-        if (PotionStackUtil.applyComponentDefault(plugin, st)) ent.setItemStack(st);
+        if (PotionStackUtil.normalizeEntityDefault(plugin, st)) {
+            ent.setItemStack(st);
+        }
 
         if (!PotionStackUtil.isPotionLike(st.getType())) return;
 
@@ -291,5 +292,68 @@ public final class PotionPackerListener implements Listener {
 
         SchedulerUtil.runAtLocation(plugin, loc,
                 () -> PotionStackUtil.normalizeInventoryComponentsOnlyDefault(plugin, inv));
+    }
+
+    private void preValidateDropIfOverstack(InventoryClickEvent e, Player p) {
+        if (e.getRawSlot() == -999) {
+            ItemStack cursor = e.getCursor();
+            if (cursor == null || cursor.getType().isAir()) return;
+
+            if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, cursor)) {
+                e.setCursor(cursor);
+                SchedulerUtil.runAtEntity(plugin, p, p::updateInventory);
+            }
+            return;
+        }
+
+        boolean isDropClick =
+                e.getClick() == ClickType.DROP ||
+                        e.getClick() == ClickType.CONTROL_DROP ||
+                        e.getAction() == InventoryAction.DROP_ALL_SLOT ||
+                        e.getAction() == InventoryAction.DROP_ONE_SLOT ||
+                        e.getAction() == InventoryAction.DROP_ALL_CURSOR ||
+                        e.getAction() == InventoryAction.DROP_ONE_CURSOR;
+
+        if (!isDropClick) return;
+
+        ItemStack target = switch (e.getAction()) {
+            case DROP_ALL_CURSOR, DROP_ONE_CURSOR -> e.getCursor();
+            default -> e.getCurrentItem();
+        };
+
+        if (target == null || target.getType().isAir()) return;
+        if (!PotionStackUtil.isPotionLike(target.getType())) return;
+
+        boolean isCursorDrop =
+                e.getAction() == InventoryAction.DROP_ALL_CURSOR
+                        || e.getAction() == InventoryAction.DROP_ONE_CURSOR;
+
+        if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, target)) {
+            if (isCursorDrop) e.setCursor(target);
+            else e.setCurrentItem(target);
+
+            SchedulerUtil.runAtEntity(plugin, p, () -> {
+                p.updateInventory();
+                scheduleFullNormalizeOnce(p);
+            });
+        }
+    }
+
+    private void normalizeCreativeCarry(Player p) {
+        if (p.getGameMode() != org.bukkit.GameMode.CREATIVE) return;
+
+        var inv = p.getInventory();
+
+        for (int i = 0; i < inv.getSize(); i++) {
+            ItemStack st = inv.getItem(i);
+            if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, st)) {
+                inv.setItem(i, st);
+            }
+        }
+
+        ItemStack cursor = p.getItemOnCursor();
+        if (PotionStackUtil.normalizeCarryForPlayer(plugin, p, cursor)) {
+            p.setItemOnCursor(cursor);
+        }
     }
 }

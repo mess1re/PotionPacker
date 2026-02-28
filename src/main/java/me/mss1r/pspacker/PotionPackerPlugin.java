@@ -57,8 +57,7 @@ public final class PotionPackerPlugin extends JavaPlugin {
 
     private int clamp(int v) {
         if (v < 1) return 1;
-        if (v > 64) return 64;
-        return v;
+        return Math.min(v, 64);
     }
 
     public boolean profilesEnabled() {
