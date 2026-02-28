@@ -41,7 +41,7 @@ Changes can be applied **without restart** using `/pp reload`.
 |-------|------------|
 | `/potionpacker reload` | Reload the configuration |
 
-Alias: `/pp reload`
+Aliases are configurable (default: `/pp`)
 
 ---
 

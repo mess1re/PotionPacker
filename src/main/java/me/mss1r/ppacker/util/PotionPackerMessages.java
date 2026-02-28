@@ -1,6 +1,6 @@
-package me.mss1r.pspacker.util;
+package me.mss1r.ppacker.util;
 
-import me.mss1r.pspacker.PotionPackerPlugin;
+import me.mss1r.ppacker.PotionPackerPlugin;
 import net.kyori.adventure.text.Component;
 
 public final class PotionPackerMessages {

@@ -1,12 +1,12 @@
-package me.mss1r.pspacker.command;
+package me.mss1r.ppacker.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import me.mss1r.pspacker.PotionPackerPlugin;
-import me.mss1r.pspacker.util.PotionPackerMessages;
-import me.mss1r.pspacker.util.PotionStackUtil;
+import me.mss1r.ppacker.PotionPackerPlugin;
+import me.mss1r.ppacker.util.PotionPackerMessages;
+import me.mss1r.ppacker.util.PotionStackUtil;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package me.mss1r.pspacker.util;
+package me.mss1r.ppacker.util;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import me.mss1r.pspacker.PotionPackerPlugin;
+import me.mss1r.ppacker.PotionPackerPlugin;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;

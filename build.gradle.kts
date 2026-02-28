@@ -2,7 +2,7 @@ plugins {
     java
 }
 
-group = "me.mss1r.pspacker"
+group = "me.mss1r.ppacker"
 version = "1.2.1"
 
 java {

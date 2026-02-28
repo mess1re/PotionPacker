@@ -1,11 +1,11 @@
-package me.mss1r.pspacker;
+package me.mss1r.ppacker;
 
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import me.mss1r.pspacker.command.BrigadierRegistrar;
-import me.mss1r.pspacker.listeners.PotionPackerListener;
-import me.mss1r.pspacker.util.PotionPackerMessages;
-import me.mss1r.pspacker.util.StackProfileResolver;
+import me.mss1r.ppacker.command.BrigadierRegistrar;
+import me.mss1r.ppacker.listeners.PotionPackerListener;
+import me.mss1r.ppacker.util.PotionPackerMessages;
+import me.mss1r.ppacker.util.StackProfileResolver;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

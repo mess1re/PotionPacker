@@ -1,8 +1,8 @@
-package me.mss1r.pspacker.listeners;
+package me.mss1r.ppacker.listeners;
 
-import me.mss1r.pspacker.PotionPackerPlugin;
-import me.mss1r.pspacker.util.PotionStackUtil;
-import me.mss1r.pspacker.util.SchedulerUtil;
+import me.mss1r.ppacker.PotionPackerPlugin;
+import me.mss1r.ppacker.util.PotionStackUtil;
+import me.mss1r.ppacker.util.SchedulerUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;

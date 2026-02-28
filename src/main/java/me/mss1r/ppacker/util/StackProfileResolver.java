@@ -1,4 +1,4 @@
-package me.mss1r.pspacker.util;
+package me.mss1r.ppacker.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

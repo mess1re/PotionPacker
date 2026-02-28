@@ -1,4 +1,4 @@
-package me.mss1r.pspacker.util;
+package me.mss1r.ppacker.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
