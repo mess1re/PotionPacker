@@ -1,7 +1,7 @@
 name: PotionPacker
 main: me.mss1r.ppacker.PotionPackerPlugin
-version: 1.2.1
-api-version: "1.21"
+version: ${pluginVersion}
+api-version: "${pluginApiVersion}"
 folia-supported: true
 
 author: mss1r
