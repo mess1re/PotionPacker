@@ -1,6 +1,7 @@
 package me.mss1r.ppacker.listeners;
 
 import me.mss1r.ppacker.PotionPackerPlugin;
+import me.mss1r.ppacker.util.InventorySyncUtil;
 import me.mss1r.ppacker.util.PotionStackUtil;
 import me.mss1r.ppacker.util.SchedulerUtil;
 import org.bukkit.Location;
@@ -300,8 +301,8 @@ public final class PotionPackerListener implements Listener {
             if (cursor == null || cursor.getType().isAir()) return;
 
             if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, cursor)) {
-                e.setCursor(cursor);
-                SchedulerUtil.runAtEntity(plugin, p, p::updateInventory);
+                InventorySyncUtil.setEventCursor(e, cursor);
+                SchedulerUtil.runAtEntity(plugin, p, () -> InventorySyncUtil.refresh(p));
             }
             return;
         }
@@ -329,11 +330,11 @@ public final class PotionPackerListener implements Listener {
                         || e.getAction() == InventoryAction.DROP_ONE_CURSOR;
 
         if (PotionStackUtil.normalizeEntityForPlayer(plugin, p, target)) {
-            if (isCursorDrop) e.setCursor(target);
+            if (isCursorDrop) InventorySyncUtil.setEventCursor(e, target);
             else e.setCurrentItem(target);
 
             SchedulerUtil.runAtEntity(plugin, p, () -> {
-                p.updateInventory();
+                InventorySyncUtil.refresh(p);
                 scheduleFullNormalizeOnce(p);
             });
         }

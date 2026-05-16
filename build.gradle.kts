@@ -7,7 +7,8 @@ plugins {
 group = "me.mss1r.ppacker"
 version = "1.2.2"
 
-val paperApiVersion = "26.1.1.build.29-alpha"
+val pluginVersion = version.toString()
+val paperApiVersion = "26.1.2.build.63-stable"
 val pluginApiVersion = "1.21"
 val javaToolchainVersion = 25
 val javaTargetVersion = 21
@@ -41,7 +42,7 @@ tasks.withType<JavaCompile>().configureEach {
 tasks.processResources {
     inputs.properties(
         mapOf(
-            "pluginVersion" to project.version,
+            "pluginVersion" to pluginVersion,
             "pluginApiVersion" to pluginApiVersion,
         )
     )
@@ -49,7 +50,7 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand(
             mapOf(
-                "pluginVersion" to project.version,
+                "pluginVersion" to pluginVersion,
                 "pluginApiVersion" to pluginApiVersion,
             )
         )
