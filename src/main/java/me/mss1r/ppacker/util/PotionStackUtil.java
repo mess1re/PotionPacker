@@ -18,34 +18,30 @@ public final class PotionStackUtil {
     }
 
     private static boolean applyMaxStack(ItemStack stack, int desired, int vanilla) {
-        if (desired <= 0 || desired == vanilla) {
-            Integer cur = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
-            if (cur != null) {
-                stack.resetData(DataComponentTypes.MAX_STACK_SIZE);
-                return true;
-            }
-            return false;
-        }
-
-        Integer cur = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
-        if (cur == null || cur != desired) {
-            stack.setData(DataComponentTypes.MAX_STACK_SIZE, desired);
-            return true;
-        }
-        return false;
+        Integer current = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
+        return applyDecision(stack, MaxStackPolicy.configuredSize(desired, vanilla, current));
     }
 
     public static boolean forceMaxStackToAmount(ItemStack stack) {
         if (stack == null || stack.getType().isAir()) return false;
         int amount = stack.getAmount();
         if (amount <= 0) return false;
+        Integer current = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
+        return applyDecision(stack, MaxStackPolicy.preserveAmount(amount, current));
+    }
 
-        Integer cur = stack.getData(DataComponentTypes.MAX_STACK_SIZE);
-        if (cur == null || cur < amount) {
-            stack.setData(DataComponentTypes.MAX_STACK_SIZE, amount);
-            return true;
-        }
-        return false;
+    private static boolean applyDecision(ItemStack stack, MaxStackPolicy.Decision decision) {
+        return switch (decision.operation()) {
+            case NONE -> false;
+            case SET -> {
+                stack.setData(DataComponentTypes.MAX_STACK_SIZE, decision.value());
+                yield true;
+            }
+            case RESET -> {
+                stack.resetData(DataComponentTypes.MAX_STACK_SIZE);
+                yield true;
+            }
+        };
     }
 
     public static boolean applyComponent(PotionPackerPlugin plugin, Player player, ItemStack stack) {
