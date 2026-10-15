@@ -8,7 +8,7 @@ group = "me.mss1r.ppacker"
 version = "1.2.2"
 
 val pluginVersion = version.toString()
-val paperApiVersion = "26.2.build.87-stable"
+val paperApiVersion = "26.3.build.190-stable"
 val pluginApiVersion = "1.21"
 val javaToolchainVersion = 25
 val javaTargetVersion = 21
